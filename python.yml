@@ -43,6 +43,9 @@ manifest:
       export MANIFEST_NAME="$CI_REGISTRY_IMAGE:latest"
     else
       export MANIFEST_NAME="$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//_}"
+      echo "$MANIFEST_NAME"
+      echo "${CI_COMMIT_REF_NAME//\//_}"
+      echo "${CI_COMMIT_REF_NAME//\\//_}"
     fi
     docker manifest create $MANIFEST_NAME $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64 $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-arm64
     docker manifest push $MANIFEST_NAME
