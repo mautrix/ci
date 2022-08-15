@@ -30,6 +30,7 @@ stages:
   - docker pull $CI_REGISTRY_IMAGE:latest || true
   - docker build --pull --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH . --file Dockerfile.ci
   - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
+  after_script:
   - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
 
 build amd64:
@@ -56,6 +57,7 @@ build docker amd64:
     DOCKER_ARCH: amd64
   after_script:
   - wget "$BEEPER_CD_TOOL_URL" -O bridge-cd-tool && chmod +x bridge-cd-tool && ./bridge-cd-tool
+  - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
 
 build docker arm64:
   <<: *build-docker

@@ -16,9 +16,9 @@ build amd64:
   - docker pull $CI_REGISTRY_IMAGE:latest || true
   - docker build --pull --cache-from $CI_REGISTRY_IMAGE:latest --build-arg TARGETARCH=amd64 --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64 .
   - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64
-  - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64
   after_script:
   - wget "$BEEPER_CD_TOOL_URL" -O bridge-cd-tool && chmod +x bridge-cd-tool && ./bridge-cd-tool
+  - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64
 
 build arm64:
   stage: build
@@ -28,6 +28,7 @@ build arm64:
   - docker pull $CI_REGISTRY_IMAGE:latest || true
   - docker build --pull --cache-from $CI_REGISTRY_IMAGE:latest --build-arg TARGETARCH=arm64 --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-arm64 .
   - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-arm64
+  after_script:
   - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-arm64
 
 manifest:
