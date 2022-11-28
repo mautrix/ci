@@ -39,7 +39,9 @@ build amd64:
 
 build arm64:
   <<: *build
-  image: dock.mau.dev/tulir/gomuks-build-docker:linux-arm64
+  image: dock.mau.dev/tulir/gomuks-build-docker:linux-arm64-native
+  tags:
+  - arm64
 
 build arm:
   <<: *build
