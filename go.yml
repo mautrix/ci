@@ -34,7 +34,7 @@ stages:
   after_script:
   - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
 
-.build-macos: &build-macos:
+.build-macos: &build-macos
   stage: build
   variables:
     MACOSX_DEPLOYMENT_TARGET: "10.13"
