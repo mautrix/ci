@@ -60,16 +60,23 @@ stages:
 build amd64:
   <<: *build
   image: dock.mau.dev/tulir/gomuks-build-docker:linux-amd64
+  tags:
+  - linux
+  - amd64
 
 build arm64:
   <<: *build
   image: dock.mau.dev/tulir/gomuks-build-docker:linux-arm64-native
   tags:
+  - linux
   - arm64
 
 build arm:
   <<: *build
   image: dock.mau.dev/tulir/gomuks-build-docker:linux-arm
+  tags:
+  - linux
+  - amd64
 
 build macos arm64:
   <<: *build-macos
@@ -86,6 +93,7 @@ build macos amd64:
 build docker amd64:
   <<: *build-docker
   tags:
+  - linux
   - amd64
   dependencies:
   - build amd64
@@ -100,6 +108,7 @@ build docker amd64:
 build docker arm64:
   <<: *build-docker
   tags:
+  - linux
   - arm64
   dependencies:
   - build arm64
