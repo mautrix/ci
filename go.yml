@@ -37,7 +37,7 @@ stages:
 .build-macos: &build-macos
   stage: build
   variables:
-    MACOSX_DEPLOYMENT_TARGET: "10.13"
+    MACOSX_DEPLOYMENT_TARGET: "11.0"
   before_script:
   - export PATH=/opt/homebrew/bin:$PATH
   - export MAUTRIX_VERSION=$(cat go.mod | grep 'maunium.net/go/mautrix ' | awk '{ print $2 }')
@@ -83,12 +83,6 @@ build macos arm64:
   tags:
   - macos
   - arm64
-
-build macos amd64:
-  <<: *build-macos
-  tags:
-  - macos
-  - amd64
 
 build docker amd64:
   <<: *build-docker
