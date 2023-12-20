@@ -23,7 +23,7 @@ variables:
   - sha256sum $BINARY_NAME | tee $BINARY_NAME.sha256sum
   artifacts:
     paths:
-    - mautrix-*
+    - $BINARY_NAME
     - example-config.yaml
 
 .build-docker: &build-docker
@@ -57,7 +57,7 @@ variables:
   - cp $(brew --prefix)/opt/libolm/lib/libolm.3.dylib .
   artifacts:
     paths:
-    - mautrix-*
+    - $BINARY_NAME
     - example-config.yaml
     - libolm.3.dylib
 
