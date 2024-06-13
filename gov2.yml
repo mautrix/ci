@@ -2,9 +2,17 @@ variables:
   BINARY_NAME_V2: mautrix-$CI_PROJECT_NAME-v2
 
 .build-v2: &build-v2
-  <<: *build
-  script:
+  stage: build
+  cache:
+    paths:
+    - .cache
+  before_script:
+  - mkdir -p .cache
+  - export GOPATH="$CI_PROJECT_DIR/.cache"
+  - export GOCACHE="$CI_PROJECT_DIR/.cache/build"
+  - export MAUTRIX_VERSION=$(cat go.mod | grep 'maunium.net/go/mautrix ' | awk '{ print $2 }')
   - export GO_LDFLAGS="-s -w -linkmode external -extldflags -static -X main.Tag=$CI_COMMIT_TAG -X main.Commit=$CI_COMMIT_SHA -X 'main.BuildTime=`date -Iseconds`' -X 'maunium.net/go/mautrix.GoModVersion=$MAUTRIX_VERSION'"
+  script:
   - go build -ldflags "$GO_LDFLAGS" -o $BINARY_NAME_V2 ./cmd/$BINARY_NAME_V2
   - sha256sum $BINARY_NAME_V2 | tee $BINARY_NAME_V2.sha256sum
   artifacts:
@@ -25,9 +33,16 @@ variables:
   - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
 
 .build-macos-v2: &build-macos-v2
-  <<: *build-macos
-  script:
+  stage: build
+  variables:
+    MACOSX_DEPLOYMENT_TARGET: "11.0"
+  before_script:
+  - export PATH=/opt/homebrew/bin:$PATH
+  - export MAUTRIX_VERSION=$(cat go.mod | grep 'maunium.net/go/mautrix ' | awk '{ print $2 }')
   - export GO_LDFLAGS="-X main.Tag=$CI_COMMIT_TAG -X main.Commit=$CI_COMMIT_SHA -X 'main.BuildTime=`date -Iseconds`' -X 'maunium.net/go/mautrix.GoModVersion=$MAUTRIX_VERSION'"
+  - export LIBRARY_PATH=$(brew --prefix)/lib
+  - export CPATH=$(brew --prefix)/include
+  script:
   - go build -ldflags "$GO_LDFLAGS" -o $BINARY_NAME_V2
   - install_name_tool -change $(brew --prefix)/opt/libolm/lib/libolm.3.dylib @rpath/libolm.3.dylib $BINARY_NAME_V2
   - install_name_tool -add_rpath @executable_path $BINARY_NAME_V2
