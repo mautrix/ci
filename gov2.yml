@@ -1,4 +1,10 @@
+stages:
+- build
+- build docker
+- manifest
+
 variables:
+  BUILDER_IMAGE: dock.mau.dev/tulir/gomuks-build-docker
   BINARY_NAME_V2: mautrix-$CI_PROJECT_NAME-v2
 
 .build-v2: &build-v2
