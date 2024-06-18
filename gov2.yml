@@ -51,7 +51,7 @@ variables:
   - export LIBRARY_PATH=$(brew --prefix)/lib
   - export CPATH=$(brew --prefix)/include
   script:
-  - go build -ldflags "$GO_LDFLAGS" -o $BINARY_NAME_V2
+  - go build -ldflags "$GO_LDFLAGS" -o $BINARY_NAME_V2 ./cmd/$BINARY_NAME_V2
   - install_name_tool -change $(brew --prefix)/opt/libolm/lib/libolm.3.dylib @rpath/libolm.3.dylib $BINARY_NAME_V2
   - install_name_tool -add_rpath @executable_path $BINARY_NAME_V2
   - install_name_tool -add_rpath /opt/homebrew/opt/libolm/lib $BINARY_NAME_V2
