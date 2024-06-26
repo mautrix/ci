@@ -121,7 +121,6 @@ manifest v2:
   before_script:
   - "mkdir -p $HOME/.docker && echo '{\"experimental\": \"enabled\"}' > $HOME/.docker/config.json"
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - export CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE/v2
   needs:
   - build docker amd64 v2
   - build docker arm64 v2
