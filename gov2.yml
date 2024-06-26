@@ -30,15 +30,12 @@ variables:
   stage: build docker
   before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - export CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE/v2
   script:
-  - docker pull $CI_REGISTRY_IMAGE:latest || true
-  - docker build --pull --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH . --file Dockerfile.v2.ci
-  - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
+  - docker pull $CI_REGISTRY_IMAGE:v2 || true
+  - docker build --pull --cache-from $CI_REGISTRY_IMAGE:v2 --tag $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-$DOCKER_ARCH . --file Dockerfile.v2.ci
+  - docker push $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-$DOCKER_ARCH
   after_script:
-  # env vars get reset in after_script
-  - export CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE/v2
-  - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
+  - docker rmi $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-$DOCKER_ARCH
 
 .build-macos-v2: &build-macos-v2
   stage: build
@@ -101,11 +98,9 @@ build docker amd64 v2:
   variables:
     DOCKER_ARCH: amd64
   after_script:
-  # env vars get reset in after_script
-  - export CI_REGISTRY_IMAGE=$CI_REGISTRY_IMAGE/v2
   - export BEEPER_BRIDGE_TYPE=${BEEPER_BRIDGE_TYPE}v2
   - wget "$BEEPER_CD_TOOL_URL" -O bridge-cd-tool && chmod +x bridge-cd-tool && ./bridge-cd-tool
-  - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
+  - docker rmi $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-$DOCKER_ARCH
 
 build docker arm64 v2:
   <<: *build-docker-v2
@@ -131,14 +126,14 @@ manifest v2:
   - build docker amd64 v2
   - build docker arm64 v2
   script:
-  - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64
-  - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-arm64
+  - docker pull $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-amd64
+  - docker pull $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-arm64
   - |
     if [[ "$CI_COMMIT_BRANCH" == "master" || "$CI_COMMIT_BRANCH" == "main" ]]; then
-      export MANIFEST_NAME="$CI_REGISTRY_IMAGE:latest"
+      export MANIFEST_NAME="$CI_REGISTRY_IMAGE:v2"
     else
-      export MANIFEST_NAME="$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//_}"
+      export MANIFEST_NAME="$CI_REGISTRY_IMAGE:v2-${CI_COMMIT_REF_NAME//\//_}"
     fi
-    docker manifest create $MANIFEST_NAME $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64 $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-arm64
+    docker manifest create $MANIFEST_NAME $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-amd64 $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-arm64
     docker manifest push $MANIFEST_NAME
-  - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64 $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-arm64
+  - docker rmi $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-amd64 $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-arm64
