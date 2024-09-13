@@ -6,6 +6,7 @@ stages:
 variables:
   BUILDER_IMAGE: dock.mau.dev/tulir/gomuks-build-docker
   BINARY_NAME: mautrix-$CI_PROJECT_NAME
+  GOTOOLCHAIN: local
 
 .build: &build
   stage: build
