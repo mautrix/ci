@@ -27,7 +27,7 @@ variables:
     - $BINARY_NAME_V2
 
 .build-docker-v2: &build-docker-v2
-  image: docker:stable
+  image: docker:latest
   stage: build docker
   before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY

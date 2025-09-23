@@ -28,7 +28,7 @@ variables:
     - example-config.yaml
 
 .build-docker: &build-docker
-  image: docker:stable
+  image: docker:latest
   stage: build docker
   before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
