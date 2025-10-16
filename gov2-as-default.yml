@@ -147,6 +147,7 @@ manifest:
         MANIFEST_NAME="$CI_REGISTRY_IMAGE:v${YY}.${MM}.${PATCH}"
       fi
       docker manifest create $MANIFEST_NAME $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64 $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-arm64
-      docker rmi $MANIFEST_NAME
+      docker manifest push $MANIFEST_NAME
+      docker manifest rm $MANIFEST_NAME
     fi
   - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64 $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-arm64
