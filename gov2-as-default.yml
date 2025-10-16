@@ -135,4 +135,18 @@ manifest:
     fi
     docker manifest create $MANIFEST_NAME $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64 $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-arm64
     docker manifest push $MANIFEST_NAME
+  - |
+    if echo "$CI_COMMIT_TAG" | grep -Eq '^v[0-9]{1}\.[0-9]{4}\.[0-9]+$'; then
+      YYMM=$(echo "$CI_COMMIT_TAG" | cut -d. -f2)
+      PATCH=$(echo "$CI_COMMIT_TAG" | cut -d. -f3)
+      YY=${YYMM%??}
+      MM=${YYMM#??}
+      if [ "$PATCH" = "0" ]; then
+        MANIFEST_NAME="$CI_REGISTRY_IMAGE:v${YY}.${MM}"
+      else
+        MANIFEST_NAME="$CI_REGISTRY_IMAGE:v${YY}.${MM}.${PATCH}"
+      fi
+      docker manifest create $MANIFEST_NAME $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64 $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-arm64
+      docker rmi $MANIFEST_NAME
+    fi
   - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-amd64 $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-arm64
