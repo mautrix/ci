@@ -38,7 +38,7 @@ variables:
       --pull --cache-from $CI_REGISTRY_IMAGE:latest \
       --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH \
       --build-arg DOCKER_HUB=$CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX \
-      . --file Dockerfile.ci \
+      . --file Dockerfile.ci
   - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
   after_script:
   - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
