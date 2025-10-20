@@ -27,13 +27,18 @@ variables:
     - $BINARY_NAME
 
 .build-docker: &build-docker
-  image: docker:latest
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:latest
   stage: build docker
   before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
   - docker pull $CI_REGISTRY_IMAGE:latest || true
-  - docker build --pull --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH . --file Dockerfile.ci
+  - |
+    docker build \
+      --pull --cache-from $CI_REGISTRY_IMAGE:latest \
+      --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH \
+      --arg DOCKER_HUB=$CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX \
+      . --file Dockerfile.ci
   - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
   after_script:
   - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
@@ -115,6 +120,7 @@ build docker arm64:
     DOCKER_ARCH: arm64
 
 manifest:
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:latest
   stage: manifest
   variables:
     GIT_STRATEGY: none
