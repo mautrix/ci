@@ -30,10 +30,16 @@ variables:
   image: docker:latest
   stage: build docker
   before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker login -u "$CI_DEPENDENCY_PROXY_USER" -p "$CI_DEPENDENCY_PROXY_PASSWORD" "$CI_DEPENDENCY_PROXY_SERVER"
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
   - docker pull $CI_REGISTRY_IMAGE:v2 || true
-  - docker build --pull --cache-from $CI_REGISTRY_IMAGE:v2 --tag $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-$DOCKER_ARCH . --file Dockerfile.v2.ci
+  - |
+    docker build \
+      --pull --cache-from $CI_REGISTRY_IMAGE:v2 \
+      --tag $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-$DOCKER_ARCH \
+      --build-arg DOCKER_HUB=$CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX \
+      . --file Dockerfile.v2.ci
   - docker push $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-$DOCKER_ARCH
   after_script:
   - docker rmi $CI_REGISTRY_IMAGE:v2-$CI_COMMIT_SHA-$DOCKER_ARCH
