@@ -74,7 +74,7 @@ build amd64:
   - amd64
 
 deploy config:
-  stage: build
+  stage: manifest
   needs:
   - build amd64
   dependencies:
@@ -82,9 +82,9 @@ deploy config:
   script:
   - |
     if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
-      $BINARY_NAME -ec /srv/web/docs.mau.fi/configs/$BINARY_NAME-latest.yaml
+      ./$BINARY_NAME -ec /srv/web/docs.mau.fi/configs/$BINARY_NAME-latest.yaml
     else
-      $BINARY_NAME -ec /srv/web/docs.mau.fi/configs/$BINARY_NAME-$CI_COMMIT_TAG.yaml
+      ./$BINARY_NAME -ec /srv/web/docs.mau.fi/configs/$BINARY_NAME-$CI_COMMIT_TAG.yaml
     fi
   rules:
   - if: '$CI_COMMIT_BRANCH == "main"'
