@@ -73,6 +73,25 @@ build amd64 v2:
   - linux
   - amd64
 
+deploy config:
+  stage: manifest
+  needs:
+  - build amd64 v2
+  dependencies:
+  - build amd64 v2
+  script:
+  - |
+    mkdir -p /srv/web/docs.mau.fi/configs/$BINARY_NAME_V2
+    FILENAME=latest.yaml
+    ./$BINARY_NAME_V2 -ec /srv/web/docs.mau.fi/configs/$BINARY_NAME_V2/$FILENAME
+    cd /srv/web/docs.mau.fi/configs/
+    chmod 644 $BINARY_NAME/$FILENAME
+    ./configrender $BINARY_NAME/$FILENAME
+  rules:
+  - if: '$CI_COMMIT_BRANCH == "main"'
+  tags:
+  - webdeploy-bridgeconfig
+
 build arm64 v2:
   <<: *build-v2
   image: $BUILDER_IMAGE:linux-arm64-native
