@@ -95,7 +95,8 @@ deploy config:
         FILENAME=v${YY}.${MM}.${PATCH}.yaml
       fi
     fi
-    ./$BINARY_NAME -ec /srv/web/docs.mau.fi/configs/$BINARY_NAME/$FILENAME
+    ./$BINARY_NAME -ec example-config.yaml
+    mv -f example-config.yaml /srv/web/docs.mau.fi/configs/$BINARY_NAME/$FILENAME
     cd /srv/web/docs.mau.fi/configs/
     chmod 644 $BINARY_NAME/$FILENAME
     ./configrender $BINARY_NAME/$FILENAME

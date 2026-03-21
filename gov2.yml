@@ -83,7 +83,8 @@ deploy config:
   - |
     mkdir -p /srv/web/docs.mau.fi/configs/$BINARY_NAME_V2
     FILENAME=latest.yaml
-    ./$BINARY_NAME_V2 -ec /srv/web/docs.mau.fi/configs/$BINARY_NAME_V2/$FILENAME
+    ./$BINARY_NAME_V2 -ec example-config.yaml
+    mv -f example-config.yaml /srv/web/docs.mau.fi/configs/$BINARY_NAME_V2/$FILENAME
     cd /srv/web/docs.mau.fi/configs/
     chmod 644 $BINARY_NAME_V2/$FILENAME
     ./configrender $BINARY_NAME_V2/$FILENAME
