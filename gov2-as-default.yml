@@ -85,7 +85,15 @@ deploy config:
     if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
       FILENAME=latest.yaml
     else
-      FILENAME=$CI_COMMIT_TAG.yaml
+      YYMM=$(echo "$CI_COMMIT_TAG" | cut -d. -f2)
+      PATCH=$(echo "$CI_COMMIT_TAG" | cut -d. -f3)
+      YY=${YYMM%??}
+      MM=${YYMM#??}
+      if [ "$PATCH" = "0" ]; then
+        FILENAME=v${YY}.${MM}.yaml
+      else
+        FILENAME=v${YY}.${MM}.${PATCH}.yaml
+      fi
     fi
     ./$BINARY_NAME -ec /srv/web/docs.mau.fi/configs/$BINARY_NAME/$FILENAME
     cd /srv/web/docs.mau.fi/configs/
