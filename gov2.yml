@@ -85,8 +85,8 @@ deploy config:
     FILENAME=latest.yaml
     ./$BINARY_NAME_V2 -ec /srv/web/docs.mau.fi/configs/$BINARY_NAME_V2/$FILENAME
     cd /srv/web/docs.mau.fi/configs/
-    chmod 644 $BINARY_NAME/$FILENAME
-    ./configrender $BINARY_NAME/$FILENAME
+    chmod 644 $BINARY_NAME_V2/$FILENAME
+    ./configrender $BINARY_NAME_V2/$FILENAME
   rules:
   - if: '$CI_COMMIT_BRANCH == "main"'
   tags:
