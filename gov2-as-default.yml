@@ -81,14 +81,16 @@ deploy config:
   - build amd64
   script:
   - |
-    ./$BINARY_NAME -ec example-config.yaml
-    chmod 644 example-config.yaml
     mkdir -p /srv/web/docs.mau.fi/configs/$BINARY_NAME
     if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
-      mv -f example-config.yaml /srv/web/docs.mau.fi/configs/$BINARY_NAME/latest.yaml
+      FILENAME=latest
     else
-      mv -f example-config.yaml /srv/web/docs.mau.fi/configs/$BINARY_NAME/$CI_COMMIT_TAG.yaml
+      FILENAME=$CI_COMMIT_TAG
     fi
+    ./$BINARY_NAME -ec /srv/web/docs.mau.fi/configs/$BINARY_NAME/$FILENAME.yaml
+    cd /srv/web/docs.mau.fi/configs/
+    chmod 644 $BINARY_NAME/$FILENAME.yaml
+    ./configrender $BINARY_NAME/$FILENAME.yaml $BINARY_NAME/$FILENAME.html
   rules:
   - if: '$CI_COMMIT_BRANCH == "main"'
   - if: '$CI_COMMIT_TAG'
