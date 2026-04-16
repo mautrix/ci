@@ -85,7 +85,9 @@ deploy config:
     mkdir -p /srv/web/docs.mau.fi/configs/$BINARY_NAME
     if [[ "$CI_COMMIT_BRANCH" == "main" ]]; then
       FILENAME=latest.yaml
+      IS_TAG="no"
     else
+      IS_TAG="yes"
       YYMM=$(echo "$CI_COMMIT_TAG" | cut -d. -f2)
       PATCH=$(echo "$CI_COMMIT_TAG" | cut -d. -f3)
       YY=${YYMM%??}
@@ -101,6 +103,12 @@ deploy config:
     cd /srv/web/docs.mau.fi/configs/
     chmod 644 $BINARY_NAME/$FILENAME
     ./configrender $BINARY_NAME/$FILENAME
+    if [[ "$IS_TAG" == "yes" ]]; then
+      echo "Re-rendering all version configs to update tag index"
+      for f in $BINARY_NAME/*.yaml; do
+        ./configrender $f
+      done
+    fi
   rules:
   - if: '$CI_COMMIT_BRANCH == "main"'
   - if: '$CI_COMMIT_TAG'
