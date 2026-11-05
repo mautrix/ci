@@ -146,9 +146,6 @@ build docker amd64:
   - build amd64
   variables:
     DOCKER_ARCH: amd64
-  after_script:
-  - wget "$BEEPER_CD_TOOL_URL" -O bridge-cd-tool && chmod +x bridge-cd-tool && ./bridge-cd-tool
-  - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA-$DOCKER_ARCH
 
 build docker arm64:
   <<: *build-docker
